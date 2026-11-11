@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>밥세(Bobse)의 네온 나이트 룸</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbit&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* Global Styles & Cyberpunk Neon Theme */
+    :root {
+      --bg-color: #080711;
+      --card-bg: rgba(20, 15, 38, 0.75);
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff007f;
+      --neon-purple: #9d00ff;
+      --neon-yellow: #ffe600;
+      --neon-green: #00ff66;
+      --text-color: #f0f3fe;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(157, 0, 255, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(0, 243, 255, 0.15) 0%, transparent 40%),
+        linear-gradient(to bottom, #05040a, #0b0817);
+      padding-bottom: 60px;
+    }
+
+    /* Grid Background Pattern Effect */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Sparkle Particle Canvas */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 0 30px var(--neon-yellow);
+    }
+
+    /* Bounce Text Animation */
+    @keyframes bounceChar {
+      0%, 100% {
+        transform: translateY(0);
+        text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor;
+      }
+      50% {
+        transform: translateY(-16px) scale(1.1);
+        text-shadow: 0 0 15px currentColor, 0 0 30px currentColor, 0 0 45px currentColor, 0 0 60px #fff;
+      }
+    }
+
+    /* Sparkling Neon Color Pulsing Effects */
+    @keyframes sparkleGlow {
+      0%, 100% {
+        filter: brightness(1) drop-shadow(0 0 3px rgba(255,255,255,0.6));
+      }
+      50% {
+        filter: brightness(1.7) drop-shadow(0 0 15px currentColor);
+      }
+    }
+
+    .bounce-text span {
+      display: inline-block;
+      animation: bounceChar 1.2s infinite ease-in-out, sparkleGlow 1.8s infinite ease-in-out alternate;
+    }
+
+    /* Staggered delay for each letter */
+    .bounce-text span:nth-child(1) { animation-delay: 0.0s; }
+    .bounce-text span:nth-child(2) { animation-delay: 0.1s; }
+    .bounce-text span:nth-child(3) { animation-delay: 0.2s; }
+    .bounce-text span:nth-child(4) { animation-delay: 0.3s; }
+    .bounce-text span:nth-child(5) { animation-delay: 0.4s; }
+    .bounce-text span:nth-child(6) { animation-delay: 0.5s; }
+    .bounce-text span:nth-child(7) { animation-delay: 0.6s; }
+    .bounce-text span:nth-child(8) { animation-delay: 0.7s; }
+    .bounce-text span:nth-child(9) { animation-delay: 0.8s; }
+    .bounce-text span:nth-child(10) { animation-delay: 0.9s; }
+    .bounce-text span:nth-child(11) { animation-delay: 1.0s; }
+    .bounce-text span:nth-child(12) { animation-delay: 1.1s; }
+
+    /* Header Section */
+    header {
+      text-align: center;
+      padding: 40px 10px 30px;
+      margin-bottom: 30px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--neon-cyan);
+      background: rgba(0, 243, 255, 0.1);
+      color: var(--neon-cyan);
+      font-size: 0.9rem;
+      font-family: 'Orbit', sans-serif;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    h1.main-title {
+      font-size: 3.2rem;
+      font-family: 'Orbit', sans-serif;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+      word-break: keep-all;
+    }
+
+    p.subtitle {
+      color: #b8c1ec;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    /* Section Styling */
+    section {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px 20px;
+      margin-bottom: 35px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    section::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px; bottom: -1px;
+      border-radius: 20px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,0,127,0.4), transparent 50%, rgba(0,243,255,0.4));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-family: 'Orbit', sans-serif;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title i {
+      color: var(--neon-cyan);
+    }
+
+    /* 3D Flip Card Component */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      perspective: 1000px;
+    }
+
+    .flip-card {
+      background-color: transparent;
+      height: 280px;
+      cursor: pointer;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+    }
+
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .flip-card-front {
+      background: linear-gradient(145deg, rgba(25, 20, 50, 0.9), rgba(12, 10, 28, 0.9));
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .flip-card-front i {
+      font-size: 3.8rem;
+      margin-bottom: 18px;
+      transition: transform 0.3s ease;
+    }
+
+    .flip-card:hover .flip-card-front i {
+      transform: scale(1.15) rotate(5deg);
+    }
+
+    .flip-card-front h3 {
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .click-hint {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .flip-card-back {
+      background: linear-gradient(145deg, rgba(40, 15, 60, 0.95), rgba(15, 8, 30, 0.95));
+      transform: rotateY(180deg);
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.3);
+    }
+
+    .flip-card-back h4 {
+      font-size: 1.2rem;
+      color: var(--neon-yellow);
+      margin-bottom: 12px;
+    }
+
+    .flip-card-back p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #e0e5ff;
+      word-break: keep-all;
+    }
+
+    /* Common Buttons */
+    .neon-btn {
+      background: transparent;
+      border: 2px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      padding: 12px 26px;
+      font-size: 1rem;
+      font-weight: bold;
+      font-family: 'Orbit', sans-serif;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+    }
+
+    .neon-btn:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 25px var(--neon-cyan);
+      transform: translateY(-2px);
+    }
+
+    .neon-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* OX Quiz Section */
+    .quiz-container {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .quiz-question {
+      font-size: 1.3rem;
+      margin-bottom: 25px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+
+    .quiz-btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .ox-btn {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      font-size: 2.5rem;
+      font-weight: 900;
+      font-family: 'Orbit', sans-serif;
+      border: 3px solid;
+      background: rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .ox-btn-o {
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+    }
+
+    .ox-btn-o:hover {
+      background: var(--neon-green);
+      color: #000;
+      box-shadow: 0 0 30px var(--neon-green);
+      transform: scale(1.1);
+    }
+
+    .ox-btn-x {
+      border-color: var(--neon-magenta);
+      color: var(--neon-magenta);
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.2);
+    }
+
+    .ox-btn-x:hover {
+      background: var(--neon-magenta);
+      color: #fff;
+      box-shadow: 0 0 30px var(--neon-magenta);
+      transform: scale(1.1);
+    }
+
+    .quiz-result {
+      margin-top: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    /* Game Recommendation Section */
+    .recommend-box {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .game-display {
+      margin: 20px auto;
+      padding: 25px;
+      min-height: 120px;
+      background: rgba(10, 8, 22, 0.8);
+      border: 2px solid var(--neon-purple);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 15px rgba(157, 0, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .game-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--neon-yellow);
+      margin-bottom: 8px;
+    }
+
+    .game-desc {
+      font-size: 0.95rem;
+      color: #a0aabf;
+    }
+
+    /* 10-Second Click Mini-Game */
+    .minigame-box {
+      text-align: center;
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #8892b0;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-family: 'Orbit', sans-serif;
+      font-weight: bold;
+      color: var(--neon-cyan);
+    }
+
+    .click-target-btn {
+      width: 100%;
+      max-width: 300px;
+      height: 100px;
+      margin: 10px auto;
+      font-size: 1.3rem;
+      border-radius: 20px;
+      border: 3px solid var(--neon-magenta);
+      background: rgba(255, 0, 127, 0.1);
+      color: #fff;
+      font-family: 'Orbit', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.3);
+      transition: all 0.1s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .click-target-btn:active {
+      transform: scale(0.96);
+      background: rgba(255, 0, 127, 0.3);
+    }
+
+    .click-target-btn:disabled {
+      border-color: #4a4a6a;
+      color: #6c6c8a;
+      box-shadow: none;
+      cursor: not-allowed;
+      background: rgba(20, 20, 35, 0.5);
+    }
+
+    .record-msg {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      color: var(--neon-green);
+      font-weight: bold;
+      min-height: 30px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      color: #5a6282;
+      font-size: 0.85rem;
+      margin-top: 20px;
+    }
+
+    /* Responsive Mobile Adjustments */
+    @media (max-width: 600px) {
+      h1.main-title {
+        font-size: 2.3rem;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .ox-btn {
+        width: 75px;
+        height: 75px;
+        font-size: 2rem;
+      }
+
+      .flip-card {
+        height: 250px;
+      }
+
+      .stat-value {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sparkle Particle Canvas for Mouse Effect -->
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="badge"><i class="fa-solid fa-bolt"></i> WELCOME TO MY NEON WORLD</div>
+      <h1 class="main-title bounce-text">
+        <span>⚡</span>
+        <span class="neon-text-cyan">텐</span>
+        <span class="neon-text-cyan">션</span>
+        <span>&nbsp;</span>
+        <span class="neon-text-yellow">U</span>
+        <span class="neon-text-yellow">P</span>
+        <span class="neon-text-yellow">!</span>
+        <span>&nbsp;</span>
+        <span class="neon-text-magenta">밥</span>
+        <span class="neon-text-magenta">세</span>
+        <span class="neon-text-cyan">의</span>
+        <span>&nbsp;</span>
+        <span class="neon-text-cyan">야</span>
+        <span class="neon-text-cyan">심</span>
+        <span class="neon-text-cyan">한</span>
+        <span>&nbsp;</span>
+        <span class="neon-text-yellow">게</span>
+        <span class="neon-text-yellow">임</span>
+        <span>&nbsp;</span>
+        <span class="neon-text-magenta">룸</span>
+        <span>⚡</span>
+      </h1>
+      <p class="subtitle">밤마다 픽셀과 네온 속에서 헤엄치는 전설의 집돌이 아지트 🎮✨</p>
+    </header>
+
+    <!-- Section 1: Favorite Things (Flip Cards) -->
+    <section>
+      <h2 class="section-title"><i class="fa-solid fa-heart"></i> 내가 좋아하는 3가지</h2>
+      <div class="cards-grid">
+        
+        <!-- Card 1: Game -->
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <i class="fa-solid fa-gamepad neon-text-cyan"></i>
+              <h3 class="neon-text-cyan">게임 (Game)</h3>
+              <div class="click-hint"><i class="fa-solid fa-hand-pointer"></i> 터치해서 이유 보기</div>
+            </div>
+            <div class="flip-card-back">
+              <h4>🎮 게임을 좋아하는 이유</h4>
+              <p>현실 세계는 퀘스트 보상이 짠데, 게임 속은 몬스터 잡으면 바로 골드와 아이템을 주니까! 통장 잔고보다 게임 골드가 늘어날 때 삶의 보람을 느낍니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: YouTube -->
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <i class="fa-brands fa-youtube neon-text-magenta"></i>
+              <h3 class="neon-text-magenta">유튜브 (YouTube)</h3>
+              <div class="click-hint"><i class="fa-solid fa-hand-pointer"></i> 터치해서 이유 보기</div>
+            </div>
+            <div class="flip-card-back">
+              <h4>📺 유튜브를 좋아하는 이유</h4>
+              <p>알고리즘이 나보다 나를 더 잘 앎... "5분 뒤에 자야지" 해놓고 새벽 3시에 고양이 영상이랑 10년 전 요리 영상 시청 중인 나를 발견할 수 있음!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Bed -->
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <i class="fa-solid fa-bed neon-text-yellow"></i>
+              <h3 class="neon-text-yellow">침대 (Bed)</h3>
+              <div class="click-hint"><i class="fa-solid fa-hand-pointer"></i> 터치해서 이유 보기</div>
+            </div>
+            <div class="flip-card-back">
+              <h4>🛏️ 침대를 좋아하는 이유</h4>
+              <p>중력의 힘을 가장 기분 좋게 체감할 수 있는 영혼의 안식처. 이불 밖은 위험하다는 만고의 진리를 온몸으로 실천하게 만들어 주는 최고의 공간입니다.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 2: OX Quiz -->
+    <section>
+      <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> 밥세 OX 퀴즈</h2>
+      <div class="quiz-container">
+        <div class="quiz-question">
+          "밥세는 <strong>게임</strong>을 무지무지 잘한다?"
+        </div>
+        <div class="quiz-btn-group">
+          <button class="ox-btn ox-btn-o" onclick="checkQuiz(true)">O</button>
+          <button class="ox-btn ox-btn-x" onclick="checkQuiz(false)">X</button>
+        </div>
+        <div id="quiz-result" class="quiz-result"></div>
+      </div>
+    </section>
+
+    <!-- Section 3: Random Game Recommendation -->
+    <section>
+      <h2 class="section-title"><i class="fa-solid fa-dice"></i> 오늘의 추천 게임</h2>
+      <div class="recommend-box">
+        <p style="color: #b8c1ec; margin-bottom: 15px;">오늘 밤 심심하다면? 밥세 추천 게임 픽!</p>
+        <div id="game-display" class="game-display">
+          <div class="game-title">❓ 버튼을 눌러보세요!</div>
+          <div class="game-desc">어떤 게임이 당첨될까요?</div>
+        </div>
+        <button class="neon-btn" onclick="getRandomGame()">
+          <i class="fa-solid fa-shuffle"></i> 게임 랜덤 추천받기
+        </button>
+      </div>
+    </section>
+
+    <!-- Section 4: 10-Second Click Mini-Game -->
+    <section>
+      <h2 class="section-title"><i class="fa-solid fa-stopwatch"></i> 10초 광클 미니게임</h2>
+      <div class="minigame-box">
+        <p style="color: #b8c1ec; margin-bottom: 15px;">10초 동안 버튼을 얼마나 많이 누를 수 있나요?</p>
+        
+        <div class="game-stats">
+          <div class="stat-item">
+            <span class="stat-label">남은 시간</span>
+            <span id="timer" class="stat-value neon-text-magenta">10.0초</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">클릭 횟수</span>
+            <span id="click-count" class="stat-value neon-text-cyan">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">최고 기록</span>
+            <span id="high-score" class="stat-value neon-text-yellow">0</span>
+          </div>
+        </div>
+
+        <button id="click-target" class="click-target-btn" onclick="handleClickTarget()">
+          <i class="fa-solid fa-hand-pointer fa-2x"></i>
+          <span id="target-btn-text">게임 시작하기!</span>
+        </button>
+
+        <div id="record-msg" class="record-msg"></div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 밥세(Bobse). All neon lights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    /* --------------------------------------------------
+       1. Canvas Sparkle Effect (Mouse & Touch Follower)
+    -------------------------------------------------- */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    const colors = ['#00f3ff', '#ff007f', '#9d00ff', '#ffe600', '#00ff66'];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 4 + 1;
+        this.speedX = (Math.random() - 0.5) * 3;
+        this.speedY = (Math.random() - 0.5) * 3;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.015;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.alpha -= this.decay;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.max(this.alpha, 0);
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.color;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function addParticles(x, y, amount = 3) {
+      for (let i = 0; i < amount; i++) {
+        particles.push(new Particle(x, y));
+      }
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      addParticles(e.clientX, e.clientY, 2);
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        addParticles(e.touches[0].clientX, e.touches[0].clientY, 2);
+      }
+    });
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].alpha <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+
+    /* --------------------------------------------------
+       2. OX Quiz Handler
+    -------------------------------------------------- */
+    function checkQuiz(userAnswer) {
+      const resultDiv = document.getElementById('quiz-result');
+      // 정답은 O (true)
+      if (userAnswer === true) {
+        resultDiv.style.color = '#00ff66';
+        resultDiv.style.background = 'rgba(0, 255, 102, 0.15)';
+        resultDiv.style.border = '1px solid #00ff66';
+        resultDiv.innerHTML = '🎉 정답입니다! (자칭) 피지컬천재 게임 고수 밥세!';
+        
+        // 축하 파티클 효과 뿜뿜
+        const rect = resultDiv.getBoundingClientRect();
+        for (let i = 0; i < 40; i++) {
+          addParticles(
+            rect.left + Math.random() * rect.width,
+            rect.top + Math.random() * rect.height,
+            1
+          );
+        }
+      } else {
+        resultDiv.style.color = '#ff007f';
+        resultDiv.style.background = 'rgba(255, 0, 127, 0.15)';
+        resultDiv.style.border = '1px solid #ff007f';
+        resultDiv.innerHTML = '😢 땡! 아쉽네요... 밥세의 실력을 의심하시다니!';
+      }
+    }
+
+
+    /* --------------------------------------------------
+       3. Random Game Recommendation List (10+ Games)
+    -------------------------------------------------- */
+    const gamesList = [
+      { title: "리그 오브 레전드 (LoL)", desc: "소환사의 협곡에서 억까 당하며 정신력 수련하기!" },
+      { title: "발로란트 (Valorant)", desc: "네온 빛 사격장에서 펼쳐지는 헤드샷의 쾌감!" },
+      { title: "마인크래프트 (Minecraft)", desc: "네온으로 도배된 나만의 밤도시 건설하기." },
+      { title: "오버워치 2 (Overwatch 2)", desc: "화물은 누가 미나요? (아무도 안 묾)" },
+      { title: "원신 (Genshin Impact)", desc: "광활한 티바트 대륙에서 힐링과 뽑기의 즐거움!" },
+      { title: "사이버펑크 2077 (Cyberpunk 2077)", desc: "진정한 네온 밤거리 감성을 느끼고 싶다면 필수!" },
+      { title: "폴가이즈 (Fall Guys)", desc: "알록달록 캐릭터들과 함께하는 좌충우돌 난투." },
+      { title: "어몽어스 (Among Us)", desc: "친구와의 우정을 청산할 수 있는 최고의 심리전!" },
+      { title: "스타듀밸리 (Stardew Valley)", desc: "귀농해서 밤새도록 낚시하고 힐링하기." },
+      { title: "엘든 링 (Elden Ring)", desc: "유프라테스강급 매운맛으로 나의 참을성을 시험하자!" },
+      { title: "산나비 (SANABI)", desc: "조선 사이버펑크 액션의 감동에 빠져들기." },
+      { title: "하스스톤 (Hearthstone)", desc: "운빨 요소를 극한으로 시험하는 턴제 카드 게임!" }
+    ];
+
+    let lastIndex = -1;
+
+    function getRandomGame() {
+      let randomIndex;
+      // 이전 추천과 동일하지 않게 처리
+      do {
+        randomIndex = Math.floor(Math.random() * gamesList.length);
+      } while (randomIndex === lastIndex);
+      
+      lastIndex = randomIndex;
+      const game = gamesList[randomIndex];
+
+      const display = document.getElementById('game-display');
+      display.style.transform = 'scale(0.95)';
+      display.style.opacity = '0.5';
+
+      setTimeout(() => {
+        display.innerHTML = `
+          <div class="game-title neon-text-yellow">🎮 ${game.title}</div>
+          <div class="game-desc">${game.desc}</div>
+        `;
+        display.style.transform = 'scale(1)';
+        display.style.opacity = '1';
+      }, 150);
+    }
+
+
+    /* --------------------------------------------------
+       4. 10-Second Click Mini-Game
+    -------------------------------------------------- */
+    let clicks = 0;
+    let timeLeft = 10.0;
+    let timerInterval = null;
+    let isGaming = false;
+    let highScore = 0;
+
+    const timerEl = document.getElementById('timer');
+    const clickCountEl = document.getElementById('click-count');
+    const highScoreEl = document.getElementById('high-score');
+    const targetBtn = document.getElementById('click-target');
+    const targetBtnText = document.getElementById('target-btn-text');
+    const recordMsg = document.getElementById('record-msg');
+
+    function handleClickTarget() {
+      // 게임 시작 전이면 스타트
+      if (!isGaming) {
+        startGame();
+      } else {
+        // 게임 진행 중이면 광클 카운트
+        clicks++;
+        clickCountEl.textContent = clicks;
+
+        // 클릭할 때마다 터치 지점 주변 파티클 효과
+        const rect = targetBtn.getBoundingClientRect();
+        addParticles(
+          rect.left + Math.random() * rect.width,
+          rect.top + Math.random() * rect.height,
+          2
+        );
+      }
+    }
+
+    function startGame() {
+      isGaming = true;
+      clicks = 0;
+      timeLeft = 10.0;
+
+      clickCountEl.textContent = clicks;
+      timerEl.textContent = timeLeft.toFixed(1) + '초';
+      recordMsg.textContent = '';
+      targetBtnText.textContent = '광클하세요!!! 🔥';
+
+      const startTime = Date.now();
+
+      timerInterval = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000;
+        timeLeft = Math.max(0, 10 - elapsed);
+        timerEl.textContent = timeLeft.toFixed(1) + '초';
+
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 50);
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      isGaming = false;
+      targetBtnText.textContent = '다시 도전하기!';
+
+      if (clicks > highScore) {
+        highScore = clicks;
+        highScoreEl.textContent = highScore;
+        recordMsg.innerHTML = `🎉 신기록 달성! 10초 동안 무려 <strong>${clicks}번</strong>이나 누르셨어요!`;
+      } else {
+        recordMsg.innerHTML = `게임 종료! 기록: <strong>${clicks}회</strong> (최고 기록: ${highScore}회)`;
+      }
+    }
+  </script>
+</body>
+</html>
